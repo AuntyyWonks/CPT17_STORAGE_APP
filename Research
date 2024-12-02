@@ -1,0 +1,95 @@
+self-storage-solution/
+│
+├── frontend/             # Contains front-end application
+│   ├── public/           # Public assets (favicon, index.html)
+│   ├── src/              # Source code for the front-end
+│   │   ├── components/   # Reusable UI components (e.g., buttons, forms)
+│   │   ├── pages/        # Pages of the app (e.g., Home, Booking)
+│   │   ├── styles/       # CSS or styling files
+│   │   ├── utils/        # Utility functions (e.g., API calls, helpers)
+│   │   ├── App.js        # Main React app file (entry point)
+│   │   ├── index.js      # React DOM renderer
+│   │   └── config.js     # Configuration (e.g., API endpoint URLs)
+│   ├── package.json      # Node.js dependencies and scripts
+│   ├── README.md         # Front-end documentation
+│   └── .env              # Environment variables (e.g., API keys)
+│
+├── backend/              # Contains backend services and logic
+│   ├── functions/        # Serverless functions (e.g., AWS Lambda)
+│   │   ├── booking.js    # Function for managing bookings
+│   │   ├── payment.js    # Function for handling payments
+│   │   ├── auth.js       # Function for user authentication
+│   │   └── utils.js      # Helper functions for backend
+│   ├── API/              # API Gateway configurations (e.g., Swagger files)
+│   ├── package.json      # Dependencies for backend (if using Node.js)
+│   └── README.md         # Backend documentation
+│
+├── infrastructure/       # Infrastructure as Code (IaC) configurations
+│   ├── templates/        # AWS CloudFormation or Terraform templates
+│   │   ├── s3-frontend.yml # Config for hosting front-end on S3
+│   │   ├── api-gateway.yml # Config for API Gateway setup
+│   │   └── cognito.yml   # Config for AWS Cognito (authentication)
+│   ├── README.md         # Documentation for infrastructure setup
+│   └── deploy.sh         # Deployment script for IaC
+│
+├── docs/                 # Documentation for the project
+│   ├── user-manual.md    # Instructions for using the app
+│   ├── developer-guide.md # Developer setup guide
+│   └── architecture.md   # High-level architecture overview
+│
+├── .gitignore            # Files and directories to ignore in version control
+├── README.md             # Main documentation for the project
+└── LICENSE               # License for the project
+
+
+Details of Key Directories
+1. Frontend
+
+    public/: Static assets like the index.html file, favicon, and images.
+    src/: Contains React components and logic.
+        components/: Reusable UI elements (e.g., a StorageUnitCard component to display storage units).
+        pages/: Page-specific components like Home.js, BookingPage.js.
+        utils/: API calls (e.g., getStorageUnits, makeBooking) and helper functions.
+        config.js: Centralized configuration for front-end (e.g., API URLs, environment variables).
+    package.json: Lists dependencies like React, Axios (for API calls), and Bootstrap (for UI).
+
+2. Backend
+
+    functions/: AWS Lambda functions for backend logic.
+        booking.js: Handles bookings (e.g., creating, retrieving, or canceling bookings).
+        payment.js: Integrates with a payment gateway like Stripe.
+        auth.js: Manages user authentication using AWS Cognito.
+    API/: Contains API Gateway configurations (like Swagger or OpenAPI definitions).
+    package.json: Lists dependencies for backend functions (e.g., AWS SDK, Stripe SDK).
+
+3. Infrastructure
+
+    templates/: Infrastructure as Code (IaC) files to define and deploy AWS resources.
+        s3-frontend.yml: Configures the S3 bucket for hosting the front-end.
+        api-gateway.yml: Sets up API Gateway endpoints.
+        cognito.yml: Configures Cognito for authentication and user management.
+    deploy.sh: Automates deployment of infrastructure using AWS CLI or Terraform.
+
+4. Documentation
+
+    user-manual.md: Explains how to use the app (e.g., booking storage, managing payments).
+    developer-guide.md: Walks through setting up the project locally and deploying it.
+    architecture.md: Describes the system architecture, including AWS services used.
+
+How to Work with This Structure
+
+    Front-End Development:
+        Work in the frontend/ directory.
+        Run the app locally using npm start.
+        Deploy to AWS Amplify or S3 when ready.
+
+    Back-End Development:
+        Add or update Lambda functions in backend/functions/.
+        Test functions locally using AWS SAM or Node.js tools.
+        Deploy using AWS CLI or a deployment tool.
+
+    Infrastructure Management:
+        Update infrastructure/templates/ to reflect any new AWS resource needs.
+        Run deploy.sh to update the infrastructure.
+
+This directory structure keeps everything organized and scalable as the project grows!
