@@ -1,0 +1,331 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  SAM Template for Capstone Storage project - with JWT Authorizer
+
+Globals:
+  Function:
+    Runtime: python3.9
+    MemorySize: 128
+    Timeout: 100
+    Tracing: Active
+  Api:
+    TracingEnabled: true  # Enables AWS X-Ray tracing for the API Gateway.
+
+Parameters:
+  UserPoolAdminGroupName:
+    Description: User pool group name for API administrators 
+    Type: String
+    Default: apiAdmins
+  CustomerSupportGroupName:
+    Description: User pool group name for Customer Support
+    Type: String
+    Default: customerSupport
+
+Resources:
+  UsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub  ${AWS::StackName}-Users
+      AttributeDefinitions:
+        - AttributeName: userid
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userid
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+    
+  UnitsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub  ${AWS::StackName}-Units
+      AttributeDefinitions:
+        - AttributeName: unitid
+          AttributeType: S
+      KeySchema:
+        - AttributeName: unitid
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  UsersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/api/users/users.lambda_handler
+      Description: Handler for all users related operations
+      Environment:
+        Variables:
+          USERS_TABLE: !Ref UsersTable
+          USER_POOL_ID: !Ref UserPool
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminSetUserPassword
+                - cognito-idp:AdminAddUserToGroup
+              Resource: !Sub "arn:aws:cognito-idp:eu-west-1:120569623901:userpool/${UserPool}"
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UsersTable
+      Tags:
+        Stack: !Sub "${AWS::StackName}"
+      Events:
+        GetUsersEvent:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: get
+            RestApiId: !Ref CapstoneRestAPI
+        PutUserEvent:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: post
+            RestApiId: !Ref SignUpAPI
+        UpdateUserEvent:
+          Type: Api
+          Properties:
+            Path: /users/{userid}
+            Method: put
+            RestApiId: !Ref CapstoneRestAPI
+        GetUserEvent:
+          Type: Api
+          Properties:
+            Path: /users/{userid}
+            Method: get
+            RestApiId: !Ref CapstoneRestAPI
+        DeleteUserEvent:
+          Type: Api
+          Properties:
+            Path: /users/{userid}
+            Method: delete
+            RestApiId: !Ref CapstoneRestAPI
+
+  SignUpAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      TracingEnabled: true
+      Tags:
+        Name: !Sub "${AWS::StackName}-SignUpAPI"
+        Stack: !Sub "${AWS::StackName}"    
+
+
+  CapstoneRestAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      TracingEnabled: true
+      Tags:
+        Name: !Sub "${AWS::StackName}-API"
+        Stack: !Sub "${AWS::StackName}"      
+      Auth:
+        DefaultAuthorizer: LambdaTokenAuthorizer
+        Authorizers:
+          LambdaTokenAuthorizer:
+            FunctionArn: !GetAtt AuthorizerFunction.Arn
+            Identity:
+              Headers:
+                - Authorization
+
+  PyUtils:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+        LayerName: pyutils
+        Description: Shared utilities for Units service 
+        ContentUri: src/layers/
+        CompatibleRuntimes:
+          - python3.9
+        RetentionPolicy: Delete
+    Metadata:
+      BuildMethod: python3.9
+
+  AddUnitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/units/create
+      Handler: create_unit.lambda_handler
+      Runtime: python3.9
+      Tracing: Active
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref UnitsTable
+      Environment:
+        Variables:
+          UNITS_TABLE_NAME: !Ref UnitsTable     
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /units
+            Method: post
+            RestApiId: !Ref CapstoneRestAPI
+  GetUnitFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/units/get
+      Handler: get_unit.lambda_handler
+      Runtime: python3.9
+      Tracing: Active
+      Policies:
+        DynamoDBReadPolicy:
+          TableName: !Ref UnitsTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref UnitsTable
+      Layers:
+        - !Ref PyUtils
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /units/{unitId}
+            Method: get
+            RestApiId: !Ref CapstoneRestAPI
+  ListUnitsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/units/list
+      Handler: list_units.lambda_handler
+      Runtime: python3.9
+      Tracing: Active
+      Policies:
+        DynamoDBReadPolicy:
+          TableName: !Ref UnitsTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref UnitsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /units
+            Method: get
+            RestApiId: !Ref CapstoneRestAPI
+
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties: 
+      UserPoolName: !Sub ${AWS::StackName}-UserPool
+      AdminCreateUserConfig: 
+        AllowAdminCreateUserOnly: false
+      AutoVerifiedAttributes: 
+        - email
+      Schema: 
+        - Name: name
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+        - Name: email
+          AttributeDataType: String
+          Mutable: true
+          Required: true
+      UsernameAttributes: 
+        - email
+      UserPoolTags:
+          Key: Name
+          Value: !Sub ${AWS::StackName} User Pool
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties: 
+      ClientName: 
+        !Sub ${AWS::StackName}UserPoolClient
+      ExplicitAuthFlows: 
+        - ALLOW_USER_PASSWORD_AUTH
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      RefreshTokenValidity: 30
+      SupportedIdentityProviders: 
+        - COGNITO
+      UserPoolId: !Ref UserPool
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows:
+        - 'code'
+      AllowedOAuthScopes:
+        - 'email'
+        - 'openid'
+      CallbackURLs:
+        - 'http://localhost'
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties: 
+      Domain: !Ref UserPoolClient
+      UserPoolId: !Ref UserPool
+
+  CustomerSupportUserPoolGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: User group for Customer Support
+      GroupName: !Ref CustomerSupportGroupName
+      Precedence: 0
+      UserPoolId: !Ref UserPool
+
+  ApiAdministratorsUserPoolGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: User group for API Administrators
+      GroupName: !Ref UserPoolAdminGroupName
+      Precedence: 0
+      UserPoolId: !Ref UserPool
+
+  AuthorizerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/api/users/authorizer.lambda_handler
+      Description: Handler for Lambda authorizer
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          APPLICATION_CLIENT_ID: !Ref UserPoolClient
+          ADMIN_GROUP_NAME: !Ref UserPoolAdminGroupName
+      Tags:
+        Stack: !Sub "${AWS::StackName}"
+
+  
+Outputs:
+  UsersTable:
+    Description: DynamoDB Users table
+    Value: !Ref UsersTable
+
+  UnitsTable:
+    Description: DynamoDB Units table
+    Value: !Ref UnitsTable
+
+  UsersFunction:
+    Description: "Lambda function used to perform actions on the users data"
+    Value: !Ref UsersFunction
+
+  OpenAPIEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${SignUpAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+
+  APIEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${CapstoneRestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+
+  UserPool:
+    Description: Cognito User Pool ID
+    Value: !Ref UserPool
+
+  UserPoolClient:
+    Description: Cognito User Pool Application Client ID
+    Value: !Ref UserPoolClient
+
+  UserPoolAdminGroupName:
+    Description: User Pool group name for API administrators
+    Value: !Ref UserPoolAdminGroupName
+  
+  CognitoLoginURL:
+    Description: Cognito User Pool Application Client Hosted Login UI URL
+    Value: !Sub 'https://${UserPoolClient}.auth.${AWS::Region}.amazoncognito.com/login?client_id=${UserPoolClient}&response_type=code&redirect_uri=http://localhost'
+
+  CognitoAuthCommand:
+    Description: AWS CLI command for Amazon Cognito User Pool authentication
+    Value: !Sub 'aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id ${UserPoolClient} --auth-parameters USERNAME=<username>,PASSWORD=<password> --query "AuthenticationResult.IdToken" --output text'
