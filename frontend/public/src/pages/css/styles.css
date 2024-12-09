@@ -12,7 +12,7 @@ body {
     position: relative;
 }
 
-/* Add brick wall texture */
+/* brick wall texture */
 body::before {
     content: '';
     position: absolute;
@@ -92,13 +92,15 @@ body::before {
     border-radius: 4px;
 }
 
-P {
-    color: #3B79A4;
-    font-size: 2em;
-    margin-bottom: 16px;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
-    letter-spacing: 1px;
-    transition: transform 0.3s ease;
+p {
+    color: aliceblue;
+    font-weight: normal;
+    font-size: 1.1em; 
+    line-height: 1.6; 
+    background-color: #6d6767; 
+    padding: 10px; 
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* Header styling */
@@ -111,7 +113,7 @@ h1 {
     transition: transform 0.3s ease;
 }
 h2 {
-    color:#000000;
+    color:bisque;
     font-size: 2em;
     margin-bottom: 20px;
     text-shadow: 3px 3px 12px rgba(255, 255, 255, 0.5);
@@ -200,3 +202,209 @@ body::after {
     background: linear-gradient(to right, #00FFFF, #1c92d2);
     opacity: 0.2;
 }
+
+/* Container for boxes */
+.box-container {
+    display: flex;
+    justify-content: center; /* Centers the boxes horizontally */
+    align-items: flex-start; /* Aligns the boxes to the top */
+    gap: 20px; /* Adds spacing between boxes */
+    margin-top: 100px; /* Pushes the boxes down to appear below the header */
+    padding: 20px;
+}
+
+/* Styles for each storage box */
+.storage-box {
+    background-color: #26344A;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+/*  effect for boxes */
+.storage-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Price text style */
+.price {
+    font-size: 1.5em;
+    color: #4C8DCC;
+    margin: 10px 0;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.popup button {
+    background-color: #292b2e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.menu a {
+    color: #B0C4DE;
+    font-size: x-small;
+    font-weight: lighter;
+}
+
+/* Main content */
+main {
+    padding: 80px 20px 60px; 
+    text-align: center;
+    min-height: calc(100vh - 160px);
+    margin-top: 70px;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.form-section {
+    margin: 20px 0;
+}
+
+.button {
+    padding: 10px 20px;
+    background-color: #292b2e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.payment-methods {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.payment-option {
+    background-color: #292b2e;
+    color: white;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 30%;
+    text-align: center;
+}
+
+.payment-option.selected {
+    background-color: #444;
+}
+
+.payment-method-section {
+    display: none;
+    margin-top: 20px;
+}
+
+.payment-method-section input,
+.payment-method-section select {
+    padding: 8px;
+    margin-top: 10px;
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.payment-method-section .qr-code img {
+    max-width: 200px;
+    margin-top: 20px;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.popup button {
+    background-color: #292b2e;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.billing-options {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 20px;
+}
+
+.billing-option {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: calc(33% - 20px);
+    text-align: center;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.billing-option:hover {
+    transform: scale(1.05);
+}
+
+.billing-option .pricing {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.billing-option .pricing p {
+    margin: 5px 0;
+}
+
+.billing-option .pricing span {
+    text-decoration: line-through;
+    color: red;
+}
+
+.billing-option p {
+    font-size: 1em;
+    color: #555;
+}
+
+#finalPriceContainer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.selected {
+    border: 2px solid #007bff;
+    background-color: #e6f0ff;
+}
+
+
+

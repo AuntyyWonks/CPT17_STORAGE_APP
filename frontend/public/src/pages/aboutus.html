@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - BYTEBOX</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+        <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;"><a href="homeconsole.html" style="color: #B0C4DE; font-size: 1em; font-weight: bold;text-decoration: none">BYTEBOX</a></div>
+    
+
+    
+        <div class="menu" style="display: flex; gap: 250px; align-items: center;">
+            <div class="manage-booking" style="position: relative; cursor: pointer; color: #B0C4DE; font-size: x-small; font-weight: lighter;" onclick="toggleDropdown('manageDropdown')">
+                Manage Booking
+                <ul id="manageDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                    <li><a href="booking.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Book Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Cancel Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View My Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View All Storage</a></li>
+                </ul>
+            </div>
+            <div><a href="aboutus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">About Us</a></div>
+            <div><a href="contactus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Contact Us</a></div>
+            <div><a href="index.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Log out</a></div>
+        </div>
+
+        <div class="profile-menu" style="position: relative;">
+            <img src="profile-icon.png" alt="Profile Icon" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer;" onclick="toggleDropdown('profileDropdown')">
+            <ul id="profileDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 50px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Account</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Billing</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Settings</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+        <main style="padding: 4px; font-family: Arial, sans-serif; color: bisque; line-height: 10;">
+            <p>
+                BYTEBOX is a dynamic and innovative company specializing in storage solutions tailored to meet your needs. 
+                Whether you're looking to declutter your home or securely store your belongings, we’ve got you covered with hassle-free 
+                booking, convenient storage access, and a user-friendly experience.
+        
+                We are a passionate group of Software Engineering students from the 
+                <strong>WeThinkCode_ Cape Town campus</strong>, and BYTEBOX is the proud result of our very first project 
+                as we embark on our exciting <strong>cloud computing journey</strong>.
+           
+                Our mission is to combine cutting-edge technology with practical solutions to deliver reliable, scalable, and efficient storage services. 
+                We’re committed to learning, growing, and delivering excellence every step of the way.
+
+                Thank you for trusting BYTEBOX to safeguard your valuables. Here's to storing the future, together!
+            </p>
+            <h3 style="margin-top: 20px;align-items: center; color: bisque;">
+                <a href="contactus.html" style="color: #4C8DCC; text-decoration: none; text-align: center;">Contact Us</a>: 
+                Have any questions or need assistance? We’re just a click away!
+            </h3>
+            
+        </main>
+
+
+    <footer style="background-color: #292b2e; color: #B0C4DE; text-align: center; padding: 10px; position: absolute; width: 100%; bottom: 0;">
+        © 2024 BYTEBOX. All rights reserved.
+    </footer>
+</body>
+</html>

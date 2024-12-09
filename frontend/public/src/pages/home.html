@@ -5,20 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BYTEBOX</title>
     <link rel="stylesheet" href="css\styles.css">
-
 </head>
 <body>
-    <!-- Homescreen after the user logs in-->
-    <div class="home-container">
-        <h2>Storage Options</h2>
-        <button>View My Byteboxes</button>
-        <ul class="storage-options">
-            <span>50 </span></ul>
-        <ul class="storage-options">
-            <span>3</span></ul>
-        <ul class="storage-options">
-                <span>500GB</span></ul>
-        <button class="buy-storage">Buy Storage</button>
+    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+        <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;">BYTEBOX</div>
+        <div class="profile-menu" style="position: relative;">
+            <img src="profile-icon.png" alt="Profile Icon" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer;" onclick="toggleDropdown()">
+            <ul id="dropdown" style="display: none; position: absolute; top: 50px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Account</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Billing</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Settings</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+    <script>
+        // JavaScript function to toggle dropdown visibility
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdown');
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        }
+        //close dropdown
+        document.addEventListener('click', (event) => {
+            const dropdown = document.getElementById('dropdown');
+            const profileMenu = document.querySelector('.profile-menu');
+            if (!profileMenu.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+    </script>
+
+<main style="padding-top: 60px; text-align: center;">
+    <h2>Available Storage Options</h2>
+    <div class="box-container">
+        <!-- Storage Option 1 -->
+        <div class="storage-box">
+            <h2>Small Storage</h2>
+            <p>5x5 ft - Perfect for small items</p>
+            <button class="button">Rent Now</button>
+        </div>
+
+        <!-- Storage Option 2 -->
+        <div class="storage-box">
+            <h2>Medium Storage</h2>
+            <p>10x10 ft - Ideal for medium-sized items</p>        
+            <button class="button">Rent Now</button>
+        </div>
+
+        <!-- Option 3 -->
+        <div class="storage-box">
+            <h2>Large Storage</h2>
+            <p>15x15 ft - Great for larger items</p>        
+            <button class="button">Rent Now</button>
+        </div>
     </div>
+</main>
+
+
+<footer style="position: absolute; bottom: 0; width: 100%; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.8); color: #B0C4DE;">
+    © 2024 BYTEBOX. All rights reserved.
+</footer>
+   
 </body>
 </html>

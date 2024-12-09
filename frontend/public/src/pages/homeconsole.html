@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BYTEBOX Console</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+        <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;">BYTEBOX</div>
+    
+        <div class="menu" style="display: flex; gap: 250px; align-items: center;">
+            <div class="manage-booking" style="position: relative; cursor: pointer; color: #B0C4DE; font-size: x-small; font-weight: lighter;" onclick="toggleDropdown('manageDropdown')">
+                Manage Booking
+                <ul id="manageDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                    <li><a href="booking.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Book Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Cancel Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View My Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View All Storage</a></li>
+                </ul>
+            </div>
+            <div><a href="aboutus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">About Us</a></div>
+            <div><a href="contactus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Contact Us</a></div>
+            <div><a href="index.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Log out</a></div>
+        </div>
+
+        <div class="profile-menu" style="position: relative;">
+            <img src="profile-icon.png" alt="Profile Icon" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer;" onclick="toggleDropdown('profileDropdown')">
+            <ul id="profileDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 50px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Account</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Billing</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Settings</a></li>
+                <li><a href="index.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function closeAllDropdowns() {
+            const dropdowns = document.querySelectorAll('.dropdown-menu');
+            dropdowns.forEach(menu => menu.style.display = 'none');
+        }
+
+        document.addEventListener('click', (event) => {
+            const isDropdownClick = event.target.closest('.manage-booking, .profile-menu');
+            if (!isDropdownClick) {
+                closeAllDropdowns();
+            }
+        });
+    </script>
+
+    <footer style="position: absolute; bottom: 0; width: 100%; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.8); color: #B0C4DE;">
+        © 2024 BYTEBOX. All rights reserved.
+    </footer>
+</body>
+</html>

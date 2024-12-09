@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Storage - BYTEBOX</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+        <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;"><a href="homeconsole.html" style="color: #B0C4DE; font-size: 1em; font-weight: bold;text-decoration: none">BYTEBOX</a></div>
+        <div class="menu" style="display: flex; gap: 250px; align-items: center;">
+            <div class="manage-booking" style="position: relative; cursor: pointer; color: #B0C4DE; font-size: x-small; font-weight: lighter;" onclick="toggleDropdown('manageDropdown')">
+                Manage Booking
+                <ul id="manageDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                    <li><a href="booking.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Book Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Cancel Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View My Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View All Storage</a></li>
+                </ul>
+            </div>
+            <div><a href="aboutus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">About Us</a></div>
+            <div><a href="contactus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Contact Us</a></div>
+            <div><a href="index.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Log out</a></div>
+        </div>
+
+        <div class="profile-menu" style="position: relative;">
+            <img src="profile-icon.png" alt="Profile Icon" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer;" onclick="toggleDropdown('profileDropdown')">
+            <ul id="profileDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 50px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Account</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Billing</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Settings</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <h1>Book Your Storage</h1>
+        <p>Choose a storage size, payment method, and billing options below.</p>
+
+        <form id="bookingForm" onsubmit="handleBookingSubmit(event)" style="max-width: 600px; margin: 0 auto;">
+            <!-- Storage Size Dropdown -->
+            <div class="form-section">
+                <label for="storageSize">Choose Storage Size</label>
+                <select id="storageSize" name="storageSize" class="dropdown" required>
+                    <option value="small">Small - 5m²</option>
+                    <option value="medium">Medium - 10m²</option>
+                    <option value="large">Large - 20m²</option>
+                </select>
+            </div>
+
+            <!-- Payment Method Selection -->
+            <div class="form-section">
+                <label for="paymentMethod">Choose Payment Method</label>
+                <div class="payment-methods">
+                    <!-- Mastercard Button -->
+                    <div class="payment-option" onclick="selectPaymentMethod('mastercard')">
+                        <input type="radio" name="paymentMethod" id="mastercard" value="mastercard">
+                        <label for="mastercard">Mastercard</label>
+                    </div>
+
+                    <!-- Visa Button -->
+                    <div class="payment-option" onclick="selectPaymentMethod('visa')">
+                        <input type="radio" name="paymentMethod" id="visa" value="visa">
+                        <label for="visa">Visa</label>
+                    </div>
+
+                    <!-- Snapscan Button -->
+                    <div class="payment-option" onclick="selectPaymentMethod('snapscan')">
+                        <input type="radio" name="paymentMethod" id="snapscan" value="snapscan">
+                        <label for="snapscan">Snapscan</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Sections -->
+            <!-- Mastercard Section -->
+            <div id="mastercardSection" class="payment-method-section">
+                <h3>Enter Your Mastercard Details</h3>
+                <input type="text" id="cardNumber" placeholder="Card Number" required pattern="\d{16}" maxlength="16">
+                <input type="text" id="expiryDate" placeholder="Expiry Date (MM/YY)" required pattern="^(0[1-9]|1[0-2])\/([0-9]{2})$" maxlength="5">
+                <input type="text" id="cvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
+            </div>
+
+            <!-- Visa Section -->
+            <div id="visaSection" class="payment-method-section">
+                <h3>Enter Your Visa Details</h3>
+                <input type="text" id="visaCardNumber" placeholder="Card Number" required pattern="\d{16}" maxlength="16">
+                <input type="text" id="visaExpiryDate" placeholder="Expiry Date (MM/YY)" required pattern="^(0[1-9]|1[0-2])\/([0-9]{2})$" maxlength="5">
+                <input type="text" id="visaCvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
+            </div>
+
+            <!-- Snapscan Section (QR Code) -->
+            <div id="snapscanSection" class="payment-method-section qr-code">
+                <h3>Scan the QR Code with Snapscan</h3>
+                <img src="https://example.com/snapscan-qr.png" alt="Snapscan QR Code">
+            </div>
+
+            <!-- Billing Options Section (Boxes with Discounted Prices) -->
+            <div class="form-section">
+                <label>Choose Billing Option</label>
+                <div class="billing-options">
+                    <div class="billing-option" onclick="selectBillingOption('monthly')">
+                        <p><span style="text-decoration: line-through; color: red;">R500</span> R450/month</p>
+                        <p>Monthly plan with a 10% discount</p>
+                    </div>
+                    <div class="billing-option" onclick="selectBillingOption('yearly')">
+                        <p><span style="text-decoration: line-through; color: red;">R5000</span> R4500/year</p>
+                        <p>Yearly plan with a 10% discount and additional 10% off for festive season</p>
+                    </div>
+                    <div class="billing-option" onclick="selectBillingOption('premium')">
+                        <p><span style="text-decoration: line-through; color: red;">R10000</span> R8000/year</p>
+                        <p>Premium plan with extra benefits</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-section">
+                <button type="submit" class="button">Checkout</button>
+            </div>
+        </form>
+
+        <!-- Popup Confirmation -->
+        <div id="popupMessage" class="popup">
+            <p>Booking Confirmed! Your message has been sent.</p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </main>
+
+    <footer>
+        © 2024 BYTEBOX. All rights reserved.
+    </footer>
+
+    <script>
+        function selectPaymentMethod(paymentMethod) {
+            document.getElementById('mastercardSection').style.display = 'none';
+            document.getElementById('visaSection').style.display = 'none';
+            document.getElementById('snapscanSection').style.display = 'none';
+
+            const options = document.querySelectorAll('.payment-option');
+            options.forEach(option => option.classList.remove('selected'));
+
+            if (paymentMethod === 'mastercard') {
+                document.getElementById('mastercardSection').style.display = 'block';
+            } else if (paymentMethod === 'visa') {
+                document.getElementById('visaSection').style.display = 'block';
+            } else if (paymentMethod === 'snapscan') {
+                document.getElementById('snapscanSection').style.display = 'block';
+            }
+
+            const selectedOption = document.getElementById(paymentMethod);
+            selectedOption.closest('.payment-option').classList.add('selected');
+            document.getElementById(paymentMethod).checked = true;
+        }
+
+        function selectBillingOption(option) {
+            // Logic for selecting billing option can be added here
+            console.log(option + ' selected');
+        }
+
+        function handleBookingSubmit(event) {
+            event.preventDefault();
+            const storageSize = document.getElementById('storageSize').value;
+            const billingOption = document.querySelector('.billing-option.selected');
+
+            let discount = 0;
+            if (billingOption && billingOption.id === 'yearly') {
+                discount += 10;
+            }
+
+            const isFestiveSeason = true;
+            if (isFestiveSeason) {
+                discount += 20;
+                document.getElementById('discountInfo').style.display = 'block';
+            }
+
+            showPopup();
+        }
+
+        function showPopup() {
+            document.getElementById('popupMessage').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popupMessage').style.display = 'none';
+            window.location.href = 'homeconsole.html';
+        }
+    </script>
+</body>
+</html>
