@@ -29,3 +29,28 @@ def lambda_handler(event, context):
         return response
     except Exception as err:
         raise
+
+
+def update_unit_status(event, context):
+    """
+    Lambda function to update the status of a storage unit.
+    """
+    body = json.loads(event["body"])
+    facility_id = body["facilityId"]
+    unit_id = body["unitId"]
+    new_status = body["status"]
+
+    table = dynamodb.Table(units_table)
+
+    table.update_item(
+        Key={"facilityId": facility_id, "unitId": unit_id},
+        UpdateExpression="SET #s = :new_status",
+        ExpressionAttributeNames={"#s": "status"},
+        ExpressionAttributeValues={":new_status": new_status},
+    )
+
+    return {
+        "statusCode": 200,
+        "body": json.dumps({"message": "Status updated successfully!"}),
+        "headers": {"Content-Type": "application/json"},
+    }    

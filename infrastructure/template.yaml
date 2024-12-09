@@ -206,6 +206,23 @@ Resources:
             Method: get
             RestApiId: !Ref CapstoneRestAPI
 
+  UpdateUnitStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/units/list
+      Handler: update_unit.lambda_handler
+      Runtime: python3.9
+      Environment:
+        Variables:
+          TABLE_NAME: StorageUnits
+      Events:
+        UpdateUnitAPI:
+          Type: Api
+          Properties:
+            Path: /units/status
+            Method: POST 
+            RestApiId: !Ref CapstoneRestAPI         
+
   UserPool:
     Type: AWS::Cognito::UserPool
     Properties: 
