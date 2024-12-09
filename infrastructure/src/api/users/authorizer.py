@@ -8,12 +8,18 @@ import time
 import urllib.request
 from jose import jwk, jwt
 from jose.utils import base64url_decode
+from aws_lambda_powertools import Logger
+
+logger = Logger()
+
+logger.info("Section 1")
 
 # *** Section 1 : base setup and token validation helper function
 is_cold_start = True
 keys = {}
 user_pool_id = os.getenv('USER_POOL_ID', None)
 app_client_id = os.getenv('APPLICATION_CLIENT_ID', None)
+customer_support_group_name = os.getenv('CUSTOMER_SUPPORT_GROUP_NAME', None)
 admin_group_name = os.getenv('ADMIN_GROUP_NAME', None)
 
 
@@ -69,47 +75,75 @@ def validate_token(token, region):
 def lambda_handler(event, context):
     global admin_group_name
     tmp = event['methodArn'].split(':')
-    api_gateway_arn_tmp = tmp[5].split('/')
+    # api_gateway_arn_tmp = tmp[5].split('/')
     region = tmp[3]
-    aws_account_id = tmp[4]
+    # aws_account_id = tmp[4]
     # validate the incoming token
     validated_decoded_token = validate_token(event['authorizationToken'], region)
     if not validated_decoded_token:
         raise Exception('Unauthorized')
     principal_id = validated_decoded_token['sub']
+
+
     # initialize the policy
-    policy = AuthPolicy(principal_id, aws_account_id)
-    policy.restApiId = api_gateway_arn_tmp[0]
-    policy.region = region
-    policy.stage = api_gateway_arn_tmp[1]
+    # policy = AuthPolicy(principal_id, aws_account_id)
+    # policy.restApiId = api_gateway_arn_tmp[0]
+    # policy.region = region
+    # policy.stage = api_gateway_arn_tmp[1]
 
     # *** Section 2 : authorization rules
     # Allow all public resources/methods explicitly
 
     # Add user specific resources/methods
-    policy.allow_method(HttpVerb.GET, f"/users/{principal_id}")
-    policy.allow_method(HttpVerb.PUT, f"/users/{principal_id}")
-    policy.allow_method(HttpVerb.DELETE, f"/users/{principal_id}")
-    policy.allow_method(HttpVerb.GET, f"/users/{principal_id}/*")
-    policy.allow_method(HttpVerb.PUT, f"/users/{principal_id}/*")
-    policy.allow_method(HttpVerb.DELETE, f"/users/{principal_id}/*")
+    # policy.allow_method(HttpVerb.GET, f"/users/{principal_id}")
+    # policy.allow_method(HttpVerb.PUT, f"/users/{principal_id}")
+    # policy.allow_method(HttpVerb.DELETE, f"/users/{principal_id}")
+    # policy.allow_method(HttpVerb.GET, f"/users/{principal_id}/*")
+    # policy.allow_method(HttpVerb.PUT, f"/users/{principal_id}/*")
+    # policy.allow_method(HttpVerb.DELETE, f"/users/{principal_id}/*")
+
+    # Look for customer support group in Cognito groups
+    if 'cognito:groups' in validated_decoded_token and validated_decoded_token['cognito:groups'][0] == customer_support_group_name:
+        # add customer suppport privileges
+        return generate_policy(principal_id, "Allow", event['methodArn'])
 
     # Look for admin group in Cognito groups
     # Assumption: admin group always has higher precedence
     if 'cognito:groups' in validated_decoded_token and validated_decoded_token['cognito:groups'][0] == admin_group_name:
         # add administrative privileges
-        policy.allow_method(HttpVerb.GET, "users")
-        policy.allow_method(HttpVerb.GET, "users/*")
-        policy.allow_method(HttpVerb.DELETE, "users")
-        policy.allow_method(HttpVerb.DELETE, "users/*")
-        policy.allow_method(HttpVerb.POST, "users")
-        policy.allow_method(HttpVerb.PUT, "users/*")
+        return generate_policy(principal_id, "Allow", event['methodArn'])
+        # policy.allow_method(HttpVerb.GET, "users")
+        # policy.allow_method(HttpVerb.GET, "users/*")
+        # policy.allow_method(HttpVerb.DELETE, "users")
+        # policy.allow_method(HttpVerb.DELETE, "users/*")
+        # policy.allow_method(HttpVerb.POST, "users")
+        # policy.allow_method(HttpVerb.PUT, "users/*")
+        # policy.allow_method(HttpVerb.GET, "units")
+        # policy.allow_method(HttpVerb.GET, "units/*")
+        # policy.allow_method(HttpVerb.POST, "units")
+        # policy.allow_method(HttpVerb.DELETE, "units")
+        # policy.allow_method(HttpVerb.DELETE, "units/*")
+        # policy.allow_method(HttpVerb.PUT, "units/*")
 
     # Finally, build the policy
-    auth_response = policy.build()
+    return generate_policy(principal_id, "Allow", event['methodArn'])
+
+
+
+def generate_policy(principal_id, effect, resource):
+    # Build the IAM policy
+    auth_response = {
+        'principalId': principal_id,
+        'policyDocument': {
+            'Version': '2012-10-17',
+            'Statement': [{
+                'Action': 'execute-api:Invoke',
+                'Effect': effect,
+                'Resource': resource
+            }]
+        }
+    }
     return auth_response
-
-
 
 # *** Section 3 : authorization policy helper classes
 class HttpVerb:
@@ -141,7 +175,7 @@ class AuthPolicy(object):
     allowMethods = []
     denyMethods = []
 
-    restApiId = "oev7rcio2j"
+    restApiId = "apiId"
     """ Replace the placeholder value with a default API Gateway API id to be used in the policy. 
     Beware of using '*' since it will not simply mean any API Gateway API id, because stars will greedily expand over '/' or other separators. 
     See https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_resource.html for more details. """

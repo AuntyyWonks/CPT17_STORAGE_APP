@@ -43,10 +43,10 @@ Resources:
     Properties:
       TableName: !Sub  ${AWS::StackName}-Units
       AttributeDefinitions:
-        - AttributeName: unitid
+        - AttributeName: unitId
           AttributeType: S
       KeySchema:
-        - AttributeName: unitid
+        - AttributeName: unitId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
 
@@ -111,8 +111,34 @@ Resources:
       TracingEnabled: true
       Tags:
         Name: !Sub "${AWS::StackName}-SignUpAPI"
-        Stack: !Sub "${AWS::StackName}"    
+        Stack: !Sub "${AWS::StackName}"
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'OPTIONS,GET,POST'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        MaxAge: 600
+      AccessLogSetting:
+          DestinationArn: !GetAtt AccessLogs.Arn
+          Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey", "status":"$context.status","protocol":"$context.protocol", "integrationStatus": $context.integrationStatus, "integrationLatency": $context.integrationLatency, "responseLength":"$context.responseLength", "context":"$context" }'
 
+  MyOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      ResourceId: !GetAtt SignUpAPI.RootResourceId
+      RestApiId: !Ref SignUpAPI
+      Integration:
+        IntegrationHttpMethod: OPTIONS
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Headers: true
 
   CapstoneRestAPI:
     Type: AWS::Serverless::Api
@@ -130,6 +156,15 @@ Resources:
             Identity:
               Headers:
                 - Authorization
+      AccessLogSetting:
+        DestinationArn: !GetAtt AccessLogs.Arn
+        Format: '{ "requestId":"$context.requestId", "ip": "$context.identity.sourceIp", "requestTime":"$context.requestTime", "httpMethod":"$context.httpMethod","routeKey":"$context.routeKey", "status":"$context.status","protocol":"$context.protocol", "integrationStatus": $context.integrationStatus, "integrationLatency": $context.integrationLatency, "responseLength":"$context.responseLength" }'
+      MethodSettings:
+        - ResourcePath: "/*"
+          LoggingLevel: INFO
+          HttpMethod: "*"
+          DataTraceEnabled: True
+      
 
   PyUtils:
     Type: AWS::Serverless::LayerVersion
@@ -175,7 +210,7 @@ Resources:
           TableName: !Ref UnitsTable
       Environment:
         Variables:
-          TABLE_NAME: !Ref UnitsTable
+          UNITS_TABLE_NAME: !Ref UnitsTable
       Layers:
         - !Ref PyUtils
       Events:
@@ -197,7 +232,7 @@ Resources:
           TableName: !Ref UnitsTable
       Environment:
         Variables:
-          TABLE_NAME: !Ref UnitsTable
+          UNITS_TABLE_NAME: !Ref UnitsTable
       Events:
         ApiEvent:
           Type: Api
@@ -206,22 +241,42 @@ Resources:
             Method: get
             RestApiId: !Ref CapstoneRestAPI
 
-  UpdateUnitStatusFunction:
+  # Booking resources
+  BookingTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "userId"
+          AttributeType: "S"
+        - AttributeName: "bookingId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "userId"
+          KeyType: "HASH"
+        - AttributeName: "bookingId"
+          KeyType: "RANGE"
+      BillingMode: PAY_PER_REQUEST
+  BookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/api/units/list
-      Handler: update_unit.lambda_handler
+      CodeUri: src/api/bookings
+      Handler: create_booking.lambda_handler
       Runtime: python3.9
+      Tracing: Active
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref BookingTable
       Environment:
         Variables:
-          TABLE_NAME: StorageUnits
+          BOOKING_TABLE_NAME: !Ref BookingTable
+          UNITS_TABLE_NAME: !Ref UnitsTable
       Events:
-        UpdateUnitAPI:
+        ApiEvent:
           Type: Api
           Properties:
-            Path: /units/status
-            Method: POST 
-            RestApiId: !Ref CapstoneRestAPI         
+            Path: /bookings
+            Method: post
+            RestApiId: !Ref CapstoneRestAPI
 
   UserPool:
     Type: AWS::Cognito::UserPool
@@ -255,7 +310,7 @@ Resources:
         - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
-      GenerateSecret: false
+      GenerateSecret: true
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 30
       SupportedIdentityProviders: 
@@ -269,6 +324,7 @@ Resources:
         - 'openid'
       CallbackURLs:
         - 'http://localhost'
+        - 'https://oauth.pstmn.io/v1/browser-callback'
 
   UserPoolDomain:
     Type: AWS::Cognito::UserPoolDomain
@@ -302,8 +358,37 @@ Resources:
           USER_POOL_ID: !Ref UserPool
           APPLICATION_CLIENT_ID: !Ref UserPoolClient
           ADMIN_GROUP_NAME: !Ref UserPoolAdminGroupName
+          CUSTOMER_SUPPORT_GROUP_NAME: !Ref CustomerSupportGroupName
       Tags:
         Stack: !Sub "${AWS::StackName}"
+
+  ApiLoggingRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - apigateway.amazonaws.com
+            Action: "sts:AssumeRole"
+      Path: /
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ApiGatewayAccountLoggingSettings:
+    Type: AWS::ApiGateway::Account
+    Properties:
+      CloudWatchRoleArn: !GetAtt ApiLoggingRole.Arn
+  AccessLogs:
+    Type: AWS::Logs::LogGroup
+    DependsOn: ApiLoggingRole
+    Properties:
+      RetentionInDays: 30
+      LogGroupName: !Sub "/${AWS::StackName}/APIAccessLogs"
+  
+  
 
   
 Outputs:
@@ -326,6 +411,10 @@ Outputs:
   APIEndpoint:
     Description: "API Gateway endpoint URL"
     Value: !Sub "https://${CapstoneRestAPI}.execute-api.${AWS::Region}.amazonaws.com/Prod"
+
+  BookingTable:
+    Description: DynamoDB Booking table
+    Value: !Ref  BookingTable
 
   UserPool:
     Description: Cognito User Pool ID

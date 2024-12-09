@@ -24,10 +24,15 @@ def lambda_handler(event, context):
     status_code = 400
     headers = {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
         }
 
     try:
+        if route_key == 'OPTIONS /users':
+            status_code = 200
+
         # Get a list of all Users
         if route_key == 'GET /users':
             ddb_response = ddbTable.scan(Select='ALL_ATTRIBUTES')
@@ -63,13 +68,24 @@ def lambda_handler(event, context):
         if route_key == 'POST /users':
             request_json = json.loads(event['body'])
             cognito_client = boto3.client('cognito-idp')
-            response = cognito_client.admin_create_user(
+            cognito_client.admin_create_user(
                 UserPoolId=USERS_POOL,
                 Username=request_json['email'],
-                TemporaryPassword='Qwertyuiop1!',
                 MessageAction= 'SUPPRESS',
+                UserAttributes=[
+                    {
+                        'Name': 'name',
+                        'Value': request_json['name']
+                    },
+                ],
             )
-            
+            cognito_client.admin_set_user_password(
+                UserPoolId=USERS_POOL,
+                Username=request_json['email'],
+                Password=request_json['password'],
+                Permanent=True
+            )
+            del request_json['password']
 
             request_json['timestamp'] = datetime.now().isoformat()
             # generate unique id if it isn't present in the request

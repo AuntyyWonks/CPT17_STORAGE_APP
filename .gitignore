@@ -163,3 +163,4 @@ cython_debug/
 
 
 .aws-sam
+*Zone.Identifier

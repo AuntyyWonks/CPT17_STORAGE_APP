@@ -1,6 +1,11 @@
 import simplejson as json
 import os
 import boto3
+from aws_lambda_powertools import Logger
+
+logger = Logger()
+
+logger.info("List units")
 
 # Globals
 units_table = os.getenv('UNITS_TABLE_NAME')
@@ -10,8 +15,11 @@ def list_units(event):
 
     table = dynamodb.Table(units_table)
     response = table.scan(Select='ALL_ATTRIBUTES')
+    print(response)
+    logger.info("Got response")
+    logger.info(response)
 
-    units = [item['data'] for item in response['Items']]
+    units = [item for item in response['Items']]
 
     return units
 

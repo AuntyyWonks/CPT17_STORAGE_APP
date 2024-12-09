@@ -43,11 +43,16 @@ def lambda_handler(event, context):
     """Handles the lambda method invocation"""
     try:
         unit_detail = add_unit(event=event)
-        response = {
-            "statusCode": 200,
-            "headers": {},
-            "body": json.dumps(unit_detail)
-        }
-        return response
+        status_code = 200
+        headers = {}
+        response_body = json.dumps(unit_detail)
     except Exception as err:
+        status_code = 400
+        response_body = {'Error:': str(err)}
+        print(str(err))
         raise
+    return {
+        'statusCode': status_code,
+        'body': json.dumps(response_body),
+        'headers': headers
+    }
