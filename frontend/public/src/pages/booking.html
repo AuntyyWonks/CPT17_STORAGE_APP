@@ -42,7 +42,7 @@
         <form id="bookingForm" onsubmit="handleBookingSubmit(event)" style="max-width: 600px; margin: 0 auto;">
             <!-- Storage Size Dropdown -->
             <div class="form-section">
-                <label for="storageSize">Choose Storage Size</label>
+                <label for="storageSize" style="color: white;">Choose Storage Size</label>
                 <select id="storageSize" name="storageSize" class="dropdown" required>
                     <option value="small">Small - 5m²</option>
                     <option value="medium">Medium - 10m²</option>
@@ -53,7 +53,7 @@
             
             <!-- Payment Method Selection -->
             <div class="form-section">
-                <label for="paymentMethod">Choose Payment Method</label>
+                <label for="paymentMethod" style="color: white;">Choose Payment Method</label>
                 <div class="payment-methods">
                     <!-- Mastercard Button -->
                     <div class="payment-option" onclick="selectPaymentMethod('mastercard')">
@@ -93,7 +93,7 @@
             </div>
 
 
-            
+
                 <!-- Section for selecting the payment method -->
                 <label for="paymentMethod" style="color: white;">Payment Method:</label>
                 <select id="paymentMethod" name="paymentMethod">
@@ -104,7 +104,7 @@
                 <br><br>
               
                 <!-- Section for selecting the town -->
-                <label for="town">Select Town to Book:</label>
+                <label for="town" style="color: white;">Select Town to Book:</label>
                 <select id="town" name="town">
                   <option value="newYork">Cape Town</option>
                   <option value="losAngeles">Durban</option>
