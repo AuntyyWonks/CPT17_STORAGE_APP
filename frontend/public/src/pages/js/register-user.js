@@ -1,4 +1,4 @@
-const registerUrl = "https://dwa288lj23.execute-api.eu-west-1.amazonaws.com/Prod/users";
+const registerUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/users";
 
 document.getElementById('registerForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -33,20 +33,30 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     console.log(newUserDetails);
 
     try {
-        const response = await fetch(registerUrl, {
+        fetch(registerUrl, {
             headers: {
                 'Content-Type': 'application/json'
             },
             method: 'POST',
             body: JSON.stringify(newUserDetails),
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log("Response: ");
+                window.location.href = "login.html";
+            } else {
+                response.json().then( data => {
+                    // Handle the error
+                    errorMessage.textContent = data.error;
+                    errorMessage.style.display = 'block';
+                })
+            }
+        })
+        .catch(error => {
+            console.error("There was a problem with the fetch ", error);
         });
-
-        if (response.ok) {
-            console.log("Response: ")
-            console.log(response);
-            window.location.href = "home.html";
-        }
     } catch (err) {
+        console.log(err);
         errorMessage.textContent = err;
         errorMessage.style.display = 'block';
     }
