@@ -310,7 +310,7 @@ Resources:
         - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
-      GenerateSecret: true
+      GenerateSecret: false
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 30
       SupportedIdentityProviders: 
@@ -399,6 +399,10 @@ Outputs:
   UnitsTable:
     Description: DynamoDB Units table
     Value: !Ref UnitsTable
+
+  AuthorizerFunction:
+    Description: "Lambda function used to authorize users"
+    Value: !Ref AuthorizerFunction
 
   UsersFunction:
     Description: "Lambda function used to perform actions on the users data"

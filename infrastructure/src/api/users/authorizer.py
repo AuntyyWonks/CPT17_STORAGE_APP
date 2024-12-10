@@ -12,8 +12,6 @@ from aws_lambda_powertools import Logger
 
 logger = Logger()
 
-logger.info("Section 1")
-
 # *** Section 1 : base setup and token validation helper function
 is_cold_start = True
 keys = {}
@@ -32,6 +30,9 @@ def validate_token(token, region):
             response = f.read()
         keys = json.loads(response.decode('utf-8'))['keys']
         is_cold_start = False
+
+    if("Bearer " in token):
+        token = token.replace("Bearer ","")
 
     # get the kid from the headers prior to verification
     headers = jwt.get_unverified_headers(token)
@@ -73,6 +74,9 @@ def validate_token(token, region):
 
 
 def lambda_handler(event, context):
+    logger.info("event: ")
+    logger.info(event)
+
     global admin_group_name
     tmp = event['methodArn'].split(':')
     # api_gateway_arn_tmp = tmp[5].split('/')
