@@ -94,6 +94,12 @@
                 <input type="text" id="visaCvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
             </div>
 
+            <!-- Snapscan Section -->
+            <div id="snapscanSection" class="payment-method-section">
+                <h3>Enter Your SnapScan Details</h3>
+                <input type="text" id="snapscanCardNumber" placeholder="Card Number" required pattern="\d{16}" maxlength="16">
+                </div>
+
 
 
                 <!-- Section for selecting the payment method -->
@@ -108,8 +114,8 @@
                 <!-- Section for selecting the town -->
                 <label for="town" style="color: white;">Select Town to Book:</label>
                 <select id="town" name="town">
-                  <option value="newYork">Cape Town</option>
-                  <option value="losAngeles">Durban</option>
+                  <option value="CPT">Cape Town</option>
+                  <option value="DBN">Durban</option>
                 </select>
                 <br><br>
               
@@ -186,6 +192,7 @@
         function handleBookingSubmit(event) {
             event.preventDefault();
             const storageSize = document.getElementById('storageSize').value;
+            const town = document.getElementById('town').value;
             const billingOption = document.querySelector('.billing-option.selected');
 
             let discount = 0;

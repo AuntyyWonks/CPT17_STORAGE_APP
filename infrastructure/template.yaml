@@ -286,8 +286,8 @@ Resources:
   BookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/api/bookings
-      Handler: create_booking.lambda_handler
+      CodeUri: src/api/bookings/create_booking
+      Handler: book_booking.lambda_handler
       Runtime: python3.9
       Tracing: Active
       Policies:
