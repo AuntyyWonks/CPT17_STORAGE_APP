@@ -35,14 +35,16 @@
         </div>
     </header>
 
-    <main>
+    <main> 
+        <br><br>
+        <br><br>
         <h1>Book Your Storage</h1>
         <p>Choose a storage size, payment method, and billing options below.</p>
 
         <form id="bookingForm" onsubmit="handleBookingSubmit(event)" style="max-width: 600px; margin: 0 auto;">
             <!-- Storage Size Dropdown -->
             <div class="form-section">
-                <label for="storageSize">Choose Storage Size</label>
+                <label for="storageSize" style="color: white;">Choose Storage Size</label>
                 <select id="storageSize" name="storageSize" class="dropdown" required>
                     <option value="small">Small - 5m²</option>
                     <option value="medium">Medium - 10m²</option>
@@ -50,9 +52,10 @@
                 </select>
             </div>
 
+            
             <!-- Payment Method Selection -->
             <div class="form-section">
-                <label for="paymentMethod">Choose Payment Method</label>
+                <label for="paymentMethod" style="color: white;">Choose Payment Method</label>
                 <div class="payment-methods">
                     <!-- Mastercard Button -->
                     <div class="payment-option" onclick="selectPaymentMethod('mastercard')">
@@ -91,30 +94,59 @@
                 <input type="text" id="visaCvv" placeholder="CVV" required pattern="\d{3}" maxlength="3">
             </div>
 
-            <!-- Snapscan Section (QR Code) -->
-            <div id="snapscanSection" class="payment-method-section qr-code">
-                <h3>Scan the QR Code with Snapscan</h3>
-                <img src="https://example.com/snapscan-qr.png" alt="Snapscan QR Code">
-            </div>
-
-            <!-- Billing Options Section (Boxes with Discounted Prices) -->
-            <div class="form-section">
-                <label>Choose Billing Option</label>
-                <div class="billing-options">
-                    <div class="billing-option" onclick="selectBillingOption('monthly')">
-                        <p><span style="text-decoration: line-through; color: red;">R500</span> R450/month</p>
-                        <p>Monthly plan with a 10% discount</p>
-                    </div>
-                    <div class="billing-option" onclick="selectBillingOption('yearly')">
-                        <p><span style="text-decoration: line-through; color: red;">R5000</span> R4500/year</p>
-                        <p>Yearly plan with a 10% discount and additional 10% off for festive season</p>
-                    </div>
-                    <div class="billing-option" onclick="selectBillingOption('premium')">
-                        <p><span style="text-decoration: line-through; color: red;">R10000</span> R8000/year</p>
-                        <p>Premium plan with extra benefits</p>
-                    </div>
+            <!-- Snapscan Section -->
+            <div id="snapscanSection" class="payment-method-section">
+                <h3>Enter Your SnapScan Details</h3>
+                <input type="text" id="snapscanCardNumber" placeholder="Card Number" required pattern="\d{16}" maxlength="16">
                 </div>
-            </div>
+
+
+
+                <!-- Section for selecting the payment method -->
+                <label for="paymentMethod" style="color: white;">Payment Method:</label>
+                <select id="paymentMethod" name="paymentMethod">
+                  <option value="creditCard">Credit Card</option>
+                  <option value="paypal">PayPal</option>
+                  <option value="bankTransfer">Bank Transfer</option>
+                </select>
+                <br><br>
+              
+                <!-- Section for selecting the town -->
+                <label for="town" style="color: white;">Select Town to Book:</label>
+                <select id="town" name="town">
+                  <option value="CPT">Cape Town</option>
+                  <option value="DBN">Durban</option>
+                </select>
+                <br><br>
+              
+                <!-- Submit button -->
+                <button type="submit">Submit</button>
+              </form>
+              
+              <style>
+                label {
+                  font-family: Arial, sans-serif;
+                  display: block;
+                  margin-bottom: 8px;
+                }
+                select {
+                  width: 200px;
+                  padding: 5px;
+                  font-size: 14px;
+                }
+                button {
+                  margin-top: 10px;
+                  padding: 8px 12px;
+                  background-color: #007BFF;
+                  color: white;
+                  border: none;
+                  cursor: pointer;
+                }
+                button:hover {
+                  background-color: #0056b3;
+                }
+              </style>
+              
 
             <!-- Submit Button -->
             <div class="form-section">
@@ -129,9 +161,6 @@
         </div>
     </main>
 
-    <footer>
-        © 2024 BYTEBOX. All rights reserved.
-    </footer>
 
     <script>
         function selectPaymentMethod(paymentMethod) {
@@ -163,6 +192,7 @@
         function handleBookingSubmit(event) {
             event.preventDefault();
             const storageSize = document.getElementById('storageSize').value;
+            const town = document.getElementById('town').value;
             const billingOption = document.querySelector('.billing-option.selected');
 
             let discount = 0;
@@ -188,5 +218,10 @@
             window.location.href = 'homeconsole.html';
         }
     </script>
+
+
+<!-- <footer>
+    © 2024 BYTEBOX. All rights reserved.
+</footer> -->
 </body>
 </html>

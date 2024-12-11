@@ -6,12 +6,15 @@ import uuid
 import os
 import boto3
 from datetime import datetime
+from aws_lambda_powertools import Logger
+
+logger = Logger()
 
 # Prepare DynamoDB client
 USERS_POOL = os.getenv('USER_POOL_ID', None)
 USERS_TABLE = os.getenv('USERS_TABLE', None)
+USER_CLIENT_ID = os.getenv('USER_CLIENT_ID', None)
 dynamodb = boto3.resource('dynamodb')
-ddbTable = dynamodb.Table(USERS_TABLE)
 ddbTable = dynamodb.Table(USERS_TABLE)
 
 
@@ -68,7 +71,22 @@ def lambda_handler(event, context):
         if route_key == 'POST /users':
             request_json = json.loads(event['body'])
             cognito_client = boto3.client('cognito-idp')
-            cognito_client.admin_create_user(
+            # response = cognito_client.sign_up(
+            #     ClientId=USER_CLIENT_ID,
+            #     Username=request_json['email'],
+            #     Password=request_json['password'],
+            #     UserAttributes=[
+            #         {
+            #             'Name': 'name',
+            #             'Value': request_json['name'],
+            #             'Name': 'custom:surname',
+            #             'Value': request_json['surname'],
+            #             'Name': 'phone_number',
+            #             'Value': request_json['phone_number']
+            #         },
+            #     ],
+            # )
+            response = cognito_client.admin_create_user(
                 UserPoolId=USERS_POOL,
                 Username=request_json['email'],
                 MessageAction= 'SUPPRESS',
@@ -79,24 +97,28 @@ def lambda_handler(event, context):
                     },
                 ],
             )
-            cognito_client.admin_set_user_password(
-                UserPoolId=USERS_POOL,
-                Username=request_json['email'],
-                Password=request_json['password'],
-                Permanent=True
-            )
-            del request_json['password']
 
-            request_json['timestamp'] = datetime.now().isoformat()
-            # generate unique id if it isn't present in the request
-            if 'userid' not in request_json:
-                request_json['userid'] = str(uuid.uuid1())
-            # update the database
-            ddbTable.put_item(
-                Item=request_json
-            )
-            response_body = request_json
-            status_code = 200
+            # logger.info("Got response from admin_create_user")
+            logger.info(response)
+            if response.ok:
+                cognito_client.admin_set_user_password(
+                    UserPoolId=USERS_POOL,
+                    Username=request_json['email'],
+                    Password=request_json['password'],
+                    Permanent=True
+                )
+                del request_json['password']
+
+                request_json['timestamp'] = datetime.now().isoformat()
+                # generate unique id if it isn't present in the request
+                if 'userid' not in request_json:
+                    request_json['userid'] = str(uuid.uuid1())
+                # update the database
+                ddbTable.put_item(
+                    Item=request_json
+                )
+                response_body = request_json
+                status_code = 200
 
         # Update a specific user by ID
         if route_key == 'PUT /users/{userid}':
@@ -110,9 +132,17 @@ def lambda_handler(event, context):
             )
             response_body = request_json
             status_code = 200
+    except cognito_client.exceptions.UsernameExistsException:
+        response_body = {'error':'Username already exists.'}
+    except cognito_client.exceptions.InvalidPasswordException:
+        response_body = {'error':'Password must contain at least 1 number, at least 1 uppercase letter, at least 1 lowercase letter and at least 1 special character.'}
+        cognito_client.admin_delete_user(
+            UserPoolId=USERS_POOL,
+            Username=request_json['email']
+        )
     except Exception as err:
         status_code = 400
-        response_body = {'Error:': str(err)}
+        response_body = {'error': str(err)}
         print(str(err))
     return {
         'statusCode': status_code,

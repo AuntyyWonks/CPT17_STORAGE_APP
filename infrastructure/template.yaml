@@ -59,6 +59,7 @@ Resources:
         Variables:
           USERS_TABLE: !Ref UsersTable
           USER_POOL_ID: !Ref UserPool
+          USER_CLIENT_ID: !Ref UserPoolClient
       Policies:
         - Version: '2012-10-17'
           Statement:
@@ -178,6 +179,32 @@ Resources:
     Metadata:
       BuildMethod: python3.9
 
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/login
+      Handler: login.lambda_handler
+      Runtime: python3.9
+      Tracing: Active
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminInitiateAuth
+              Resource: !Sub "arn:aws:cognito-idp:eu-west-1:120569623901:userpool/${UserPool}"
+      Environment:
+        Variables:
+          USER_POOL_ID: !Ref UserPool
+          USER_CLIENT_ID: !Ref UserPoolClient
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /login
+            Method: post
+            RestApiId: !Ref SignUpAPI
+
   AddUnitFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -259,8 +286,8 @@ Resources:
   BookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/api/bookings
-      Handler: create_booking.lambda_handler
+      CodeUri: src/api/bookings/create_booking
+      Handler: book_booking.lambda_handler
       Runtime: python3.9
       Tracing: Active
       Policies:
@@ -310,6 +337,7 @@ Resources:
         - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
+        - ALLOW_ADMIN_USER_PASSWORD_AUTH
       GenerateSecret: false
       PreventUserExistenceErrors: ENABLED
       RefreshTokenValidity: 30

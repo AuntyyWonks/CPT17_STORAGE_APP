@@ -1,39 +1,53 @@
-import Amplify, { Auth } from 'aws-amplify';
-import awsconfig from './aws-exports';
+const loginUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/login";
 
-
-Amplify.configure({
-  Auth: {
-    region: 'eu-west-1', 
-    userPoolId: 'eu-west-1_JMpYjGBfK',
-    userPoolWebClientId: '6fjpsk21jp56kup72u8d3cgoau',
-    mandatorySignIn: true,
-  },
-});
-
-// Handle form submission
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault(); 
+    e.preventDefault();
 
-  const username = document.getElementById('username').value;
-  const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('error-message');
 
-  try {
-      const user = await Auth.signIn(username, password);
-      console.log('User signed in successfully:', user);
+    errorMessage.style.display = 'none';
+    errorMessage.textContent = '';
 
-      window.location.href = 'homeconsole.html'; 
-  } catch (error) {
-      console.error('Error signing in:', error);
-      
-      if (error.code === 'UserNotFoundException') {
-          document.getElementById('error-message').textContent = 'User not found';
-          window.location.href = 'index.html';
-      } else if (error.code === 'NotAuthorizedException') {
-          document.getElementById('error-message').textContent = 'Incorrect username or password';
-      
-      } else {
-          document.getElementById('error-message').textContent = 'An error occurred: ' + error.message;
-      }
-  }
+    const userDetails = {
+        username: username,
+        password: password
+    };
+
+    console.log(userDetails);
+
+    try {
+        fetch(loginUrl, {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST',
+            body: JSON.stringify(userDetails),
+        })
+        .then(response => {
+            response.json().then( data => {
+                if (response.ok) {
+                    localStorage.setItem('id_token', data.id_token);
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('refresh_token', data.refresh_token);
+                    
+                    window.location.href = "homeconsole.html";
+                } else {
+                    // Handle the error
+                    errorMessage.textContent = data.error;
+                    errorMessage.style.display = 'block';
+                }
+                
+            })
+            
+        })
+        .catch(error => {
+            console.error("There was a problem with the fetch ", error);
+        });
+    } catch (err) {
+        console.log(err);
+        errorMessage.textContent = err;
+        errorMessage.style.display = 'block';
+    }
 });
