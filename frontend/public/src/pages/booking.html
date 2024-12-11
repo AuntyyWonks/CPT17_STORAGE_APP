@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Storage - BYTEBOX</title>
     <link rel="stylesheet" href="css/styles.css">
+    <script src="js/checkLoggedin.js"></script>
 </head>
 <body>
     <header style="position: fixed; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
@@ -21,7 +22,7 @@
             </div>
             <div><a href="aboutus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">About Us</a></div>
             <div><a href="contactus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Contact Us</a></div>
-            <div><a href="index.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Log out</a></div>
+            <div><a href="javascript:void(0)" onclick="LogOut()" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Log out</a></div>
         </div>
 
         <div class="profile-menu" style="position: relative;">
@@ -34,6 +35,18 @@
             </ul>
         </div>
     </header>
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function closeAllDropdowns() {
+            const dropdowns = document.querySelectorAll('.dropdown-menu');
+            dropdowns.forEach(menu => menu.style.display = 'none');
+        }
+    </script>
 
     <main> 
         <br><br>

@@ -28,6 +28,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         .then(response => {
             response.json().then( data => {
                 if (response.ok) {
+                    localStorage.setItem('username', username);
                     localStorage.setItem('id_token', data.id_token);
                     localStorage.setItem('access_token', data.access_token);
                     localStorage.setItem('refresh_token', data.refresh_token);

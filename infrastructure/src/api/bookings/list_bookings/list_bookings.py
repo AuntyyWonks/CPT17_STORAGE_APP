@@ -44,6 +44,12 @@ def list_bookings(event):
     return all_user_bookings
 
 def lambda_handler(event, context):
+    headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    }
     try:
         # Get the orders for the user
         orders = list_bookings(event)
@@ -51,7 +57,7 @@ def lambda_handler(event, context):
         # Construct the response
         response = {
             "statusCode": 200,
-            "headers": {},
+            "headers": headers,
             "body": json.dumps({
                 "orders": orders
             })

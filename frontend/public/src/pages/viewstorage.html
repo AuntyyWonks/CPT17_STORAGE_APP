@@ -3,9 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Book Storage - BYTEBOX</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/checkLoggedin.js"></script>
 </head>
 <body>
-    <h2>VIEW STORAGES</h2>
+    <header style="position: fixed; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+        <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;"><a href="homeconsole.html" style="color: #B0C4DE; font-size: 1em; font-weight: bold;text-decoration: none">BYTEBOX</a></div>
+        <div class="menu" style="display: flex; gap: 250px; align-items: center;">
+            <div class="manage-booking" style="position: relative; cursor: pointer; color: #B0C4DE; font-size: x-small; font-weight: lighter;" onclick="toggleDropdown('manageDropdown')">
+                Manage Booking
+                <ul id="manageDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 30px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                    <li><a href="booking.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Book Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Cancel Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View My Storage</a></li>
+                    <li><a href="viewstorage.html" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">View All Storage</a></li>
+                </ul>
+            </div>
+            <div><a href="aboutus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">About Us</a></div>
+            <div><a href="contactus.html" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Contact Us</a></div>
+            <div><a href="javascript:void(0)" onclick="LogOut()" style="color: #B0C4DE; font-size: x-small;font-weight: lighter;text-decoration: none;">Log out</a></div>
+        </div>
+
+        <div class="profile-menu" style="position: relative;">
+            <img src="profile-icon.png" alt="Profile Icon" style="width: 40px; height: 40px; border-radius: 50%; cursor: pointer;" onclick="toggleDropdown('profileDropdown')">
+            <ul id="profileDropdown" class="dropdown-menu" style="display: none; position: absolute; top: 50px; right: 0; background-color: #292b2e; border: 1px solid #4C8DCC; border-radius: 4px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); list-style: none; padding: 10px;">
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Account</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Billing</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Settings</a></li>
+                <li><a href="#" style="text-decoration: none; color: #B0C4DE; padding: 10px; display: block;">Logout</a></li>
+            </ul>
+        </div>
+    </header>
+    <script>
+        function toggleDropdown(id) {
+            const dropdown = document.getElementById(id);
+            const isVisible = dropdown.style.display === 'block';
+            dropdown.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function closeAllDropdowns() {
+            const dropdowns = document.querySelectorAll('.dropdown-menu');
+            dropdowns.forEach(menu => menu.style.display = 'none');
+        }
+    </script>
+
+    <main> 
+        <br><br>
+        <br><br>
+        <h1>Your Storage</h1>
+
+        <div id="my-units">
+        </div>
+
+        <div id="error-message"></div>
+
+        <!-- Popup Confirmation -->
+        <div id="popupMessage" class="popup">
+            <p>Booking Confirmed! Your message has been sent.</p>
+            <button onclick="closePopup()">Close</button>
+        </div>
+    </main>
+
+    <script>
+        function openPopup() {
+            // Show the popup after submitting the form
+            document.getElementById('popupMessage').style.display = 'block';
+            
+        }
+
+        function closePopup() {
+            document.getElementById('popupMessage').style.display = 'none';
+            // window.location.href = 'homeconsole.html';
+        }
+    </script>
+    <script src="js/viewstorage.js"></script>
 </body>
 </html>

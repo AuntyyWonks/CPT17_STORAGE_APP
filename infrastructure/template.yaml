@@ -304,6 +304,27 @@ Resources:
             Path: /bookings
             Method: post
             RestApiId: !Ref CapstoneRestAPI
+  GetBookingsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/api/bookings/list_bookings
+      Handler: list_bookings.lambda_handler
+      Runtime: python3.9
+      Tracing: Active
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref BookingTable
+      Environment:
+        Variables:
+          BOOKING_TABLE_NAME: !Ref BookingTable
+          UNITS_TABLE_NAME: !Ref UnitsTable
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /bookings
+            Method: get
+            RestApiId: !Ref CapstoneRestAPI
 
   UserPool:
     Type: AWS::Cognito::UserPool
