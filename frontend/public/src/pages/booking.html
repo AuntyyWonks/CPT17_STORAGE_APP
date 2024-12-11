@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+    <header style="position: fixed; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
         <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;"><a href="homeconsole.html" style="color: #B0C4DE; font-size: 1em; font-weight: bold;text-decoration: none">BYTEBOX</a></div>
         <div class="menu" style="display: flex; gap: 250px; align-items: center;">
             <div class="manage-booking" style="position: relative; cursor: pointer; color: #B0C4DE; font-size: x-small; font-weight: lighter;" onclick="toggleDropdown('manageDropdown')">
@@ -42,19 +42,67 @@
         <p>Choose a storage size, payment method, and billing options below.</p>
 
         <form id="bookingForm" onsubmit="handleBookingSubmit(event)" style="max-width: 600px; margin: 0 auto;">
-            <!-- Storage Size Dropdown -->
-            <div class="form-section">
-                <label for="storageSize" style="color: white;">Choose Storage Size</label>
-                <select id="storageSize" name="storageSize" class="dropdown" required>
-                    <option value="small">Small - 5m²</option>
-                    <option value="medium">Medium - 10m²</option>
-                    <option value="large">Large - 20m²</option>
-                </select>
-            </div>
+            <!-- Section for selecting the town -->
+            <label for="town" style="color: white;">Select Town to Book:</label>
+            <select id="town" name="town">
+              <option value="CPT">Cape Town</option>
+              <option value="DBN">Durban</option>
+            </select>
+            <br><br>
 
+        
+          
+            <!-- Pricing Boxes -->
+            <div class="pricing-boxes" style="display: flex; justify-content: space-between; gap: 20px;">
+                <div class="storage-size-box" onclick="selectStorageSize(event)" id="smallBox" style="padding: 10px; border: 1px solid #4C8DCC; border-radius: 4px; background-color: #292b2e; color: #B0C4DE; flex: 1;">
+                    <h3>Small - 5m²</h3>
+                    <p>Price: R100/month</p>
+                    <p class="discount" id="smallDiscount"></p>
+                </div>
+                <div class="storage-size-box" onclick="selectStorageSize(event)" id="smallBox" style="padding: 10px; border: 1px solid #4C8DCC; border-radius: 4px; background-color: #292b2e; color: #B0C4DE; flex: 1;">                    
+                    <h3>Medium - 10m²</h3>
+                    <p>Price: R200/month</p>
+                    <p class="discount" id="mediumDiscount"></p>
+                </div>
+                <div class="storage-size-box" onclick="selectStorageSize(event)" id="smallBox" style="padding: 10px; border: 1px solid #4C8DCC; border-radius: 4px; background-color: #292b2e; color: #B0C4DE; flex: 1;">   
+                    <h3>Large - 20m²</h3>
+                    <p>Price: R400/month</p>
+                    <p class="discount" id="largeDiscount"></p>
+                </div>
+            </div>
+            <script>
+                function selectStorageSize(event) {
+                    // Reset all discounts
+                    const discounts = document.querySelectorAll('.discount');
+                    discounts.forEach(discount => discount.innerText = '');
             
+            
+                    const festiveSeason = true; 
+                    const yearlyBilling = true; 
+            
+                    let discountPercentage = 0;
+            
+                    // Assign discount based on storage size
+                    const clickedBox = event.currentTarget;
+                    const discountElement = clickedBox.querySelector('.discount');
+            
+                    if (clickedBox.id === 'smallBox') {
+                        discountPercentage = "R90/month"
+                    } else if (clickedBox.id === 'mediumBox') {
+                        discountPercentage = "R180/month"
+                    } else if (clickedBox.id === 'largeBox') {
+                        discountPercentage = "R360/month"
+                    }
+            
+                    // the discount message
+                    discountElement.innerText = `Festive Discount: ${discountPercentage} (10% off for yearly billing)`;
+                }
+            </script>
+            
+
+    
             <!-- Payment Method Selection -->
-            <div class="form-section">
+            <div class="form-section" onsubmit="handleBookingSubmit(event)">
                 <label for="paymentMethod" style="color: white;">Choose Payment Method</label>
                 <div class="payment-methods">
                     <!-- Mastercard Button -->
@@ -78,7 +126,6 @@
             </div>
 
             <!-- Payment Method Sections -->
-            <!-- Mastercard Section -->
             <div id="mastercardSection" class="payment-method-section">
                 <h3>Enter Your Mastercard Details</h3>
                 <input type="text" id="cardNumber" placeholder="Card Number" required pattern="\d{16}" maxlength="16">
@@ -98,55 +145,7 @@
             <div id="snapscanSection" class="payment-method-section">
                 <h3>Enter Your SnapScan Details</h3>
                 <input type="text" id="snapscanCardNumber" placeholder="Card Number" required pattern="\d{16}" maxlength="16">
-                </div>
-
-
-
-                <!-- Section for selecting the payment method -->
-                <label for="paymentMethod" style="color: white;">Payment Method:</label>
-                <select id="paymentMethod" name="paymentMethod">
-                  <option value="creditCard">Credit Card</option>
-                  <option value="paypal">PayPal</option>
-                  <option value="bankTransfer">Bank Transfer</option>
-                </select>
-                <br><br>
-              
-                <!-- Section for selecting the town -->
-                <label for="town" style="color: white;">Select Town to Book:</label>
-                <select id="town" name="town">
-                  <option value="CPT">Cape Town</option>
-                  <option value="DBN">Durban</option>
-                </select>
-                <br><br>
-              
-                <!-- Submit button -->
-                <button type="submit">Submit</button>
-              </form>
-              
-              <style>
-                label {
-                  font-family: Arial, sans-serif;
-                  display: block;
-                  margin-bottom: 8px;
-                }
-                select {
-                  width: 200px;
-                  padding: 5px;
-                  font-size: 14px;
-                }
-                button {
-                  margin-top: 10px;
-                  padding: 8px 12px;
-                  background-color: #007BFF;
-                  color: white;
-                  border: none;
-                  cursor: pointer;
-                }
-                button:hover {
-                  background-color: #0056b3;
-                }
-              </style>
-              
+            </div>
 
             <!-- Submit Button -->
             <div class="form-section">
@@ -161,15 +160,31 @@
         </div>
     </main>
 
-
     <script>
+        function updatePricing() {
+            const storageSize = document.getElementById('storageSize').value;
+            const festiveSeason = true;
+
+            // Hide all discounts initially
+            document.getElementById('smallStorageDiscount').style.display = 'none';
+            document.getElementById('mediumStorageDiscount').style.display = 'none';
+            document.getElementById('largeStorageDiscount').style.display = 'none';
+
+            // Show the discount for selected storage size
+            if (festiveSeason) {
+                if (storageSize === 'small') {
+                    document.getElementById('smallStorageDiscount').style.display = 'block';
+                } else if (storageSize === 'medium') {
+                    document.getElementById('mediumStorageDiscount').style.display = 'block';
+                } else if (storageSize === 'large') {
+                    document.getElementById('largeStorageDiscount').style.display = 'block';
+                }
+            }
+        }
         function selectPaymentMethod(paymentMethod) {
             document.getElementById('mastercardSection').style.display = 'none';
             document.getElementById('visaSection').style.display = 'none';
             document.getElementById('snapscanSection').style.display = 'none';
-
-            const options = document.querySelectorAll('.payment-option');
-            options.forEach(option => option.classList.remove('selected'));
 
             if (paymentMethod === 'mastercard') {
                 document.getElementById('mastercardSection').style.display = 'block';
@@ -178,39 +193,15 @@
             } else if (paymentMethod === 'snapscan') {
                 document.getElementById('snapscanSection').style.display = 'block';
             }
-
-            const selectedOption = document.getElementById(paymentMethod);
-            selectedOption.closest('.payment-option').classList.add('selected');
-            document.getElementById(paymentMethod).checked = true;
         }
 
-        function selectBillingOption(option) {
-            // Logic for selecting billing option can be added here
-            console.log(option + ' selected');
-        }
 
         function handleBookingSubmit(event) {
             event.preventDefault();
-            const storageSize = document.getElementById('storageSize').value;
-            const town = document.getElementById('town').value;
-            const billingOption = document.querySelector('.billing-option.selected');
 
-            let discount = 0;
-            if (billingOption && billingOption.id === 'yearly') {
-                discount += 10;
-            }
-
-            const isFestiveSeason = true;
-            if (isFestiveSeason) {
-                discount += 20;
-                document.getElementById('discountInfo').style.display = 'block';
-            }
-
-            showPopup();
-        }
-
-        function showPopup() {
+            // Show the popup after submitting the form
             document.getElementById('popupMessage').style.display = 'block';
+            
         }
 
         function closePopup() {
@@ -219,9 +210,5 @@
         }
     </script>
 
-
-<!-- <footer>
-    © 2024 BYTEBOX. All rights reserved.
-</footer> -->
 </body>
 </html>

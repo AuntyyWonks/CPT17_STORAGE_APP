@@ -100,25 +100,25 @@ def lambda_handler(event, context):
 
             # logger.info("Got response from admin_create_user")
             logger.info(response)
-            if response.ok:
-                cognito_client.admin_set_user_password(
-                    UserPoolId=USERS_POOL,
-                    Username=request_json['email'],
-                    Password=request_json['password'],
-                    Permanent=True
-                )
-                del request_json['password']
+          
+            cognito_client.admin_set_user_password(
+                UserPoolId=USERS_POOL,
+                Username=request_json['email'],
+                Password=request_json['password'],
+                Permanent=True
+            )
+            del request_json['password']
 
-                request_json['timestamp'] = datetime.now().isoformat()
-                # generate unique id if it isn't present in the request
-                if 'userid' not in request_json:
-                    request_json['userid'] = str(uuid.uuid1())
-                # update the database
-                ddbTable.put_item(
-                    Item=request_json
-                )
-                response_body = request_json
-                status_code = 200
+            request_json['timestamp'] = datetime.now().isoformat()
+            # generate unique id if it isn't present in the request
+            if 'userid' not in request_json:
+                request_json['userid'] = str(uuid.uuid1())
+            # update the database
+            ddbTable.put_item(
+                Item=request_json
+            )
+            response_body = request_json
+            status_code = 200
 
         # Update a specific user by ID
         if route_key == 'PUT /users/{userid}':

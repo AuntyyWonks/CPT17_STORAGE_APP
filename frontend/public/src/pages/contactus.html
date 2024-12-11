@@ -8,7 +8,7 @@
 
 </head>
 <body>
-    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+    <header style="position: fixed; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
         <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;"><a href="homeconsole.html" style="color: #B0C4DE; font-size: 1em; font-weight: bold;text-decoration: none">BYTEBOX</a></div>
     
         <div class="menu" style="display: flex; gap: 250px; align-items: center;">
@@ -33,13 +33,13 @@
 
         <!-- Contact Form -->
         <form id="contactForm" onsubmit="handleSubmit(event)" style="max-width: 600px; margin: 0 auto;">
-            <label for="name" style="display: block; margin-bottom: 10px;">Your Name</label>
+            <label for="name" style="display: block; margin-bottom: 10px;color: aliceblue;">Your Name</label>
             <input type="text" id="name" name="name" required placeholder="Enter your name" style="width: 100%; padding: 10px; margin-bottom: 20px;">
 
-            <label for="email" style="display: block; margin-bottom: 10px;">Your Email</label>
+            <label for="email" style="display: block; margin-bottom: 10px;color: aliceblue;">Your Email</label>
             <input type="email" id="email" name="email" required placeholder="Enter your email" style="width: 100%; padding: 10px; margin-bottom: 20px;">
 
-            <label for="message" style="display: block; margin-bottom: 10px;">Your Message</label>
+            <label for="message" style="display: block; margin-bottom: 10px;color: aliceblue;">Your Message</label>
             <textarea id="message" name="message" rows="5" required placeholder="Enter your message" style="width: 100%; padding: 10px; margin-bottom: 20px;"></textarea>
 
             <button type="submit" style="padding: 10px 20px; background-color: #292b2e; color: white; border: none; border-radius: 4px;">Send Message</button>
@@ -52,7 +52,7 @@
         </div>
     </main>
 
-    <footer style="position: absolute; bottom: 0; width: 100%; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.8); color: #B0C4DE;">
+    <footer style="position: fixed; bottom: 0; width: 100%; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.8); color: #B0C4DE;">
         © 2024 BYTEBOX. All rights reserved.
     </footer>
 

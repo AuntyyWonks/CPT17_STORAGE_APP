@@ -41,7 +41,8 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
             body: JSON.stringify(newUserDetails),
         })
         .then(response => {
-            if (response.ok) {
+            console.log(response)
+            if (response.status === 200) {
                 console.log("Response: ");
                 window.location.href = "login.html";
             } else {
