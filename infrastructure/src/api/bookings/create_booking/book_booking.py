@@ -19,14 +19,16 @@ def book_unit(event: dict):
     logger.info("event: "+ event)
 
     detail = json.loads(event['body'])
-    unit_id = detail['unit_id']
-    total_amount = detail['totalAmount']
+    unit_id = str(uuid.uuid1())
+    # total_amount = detail['totalAmount']
     user_id = event['requestContext']['authorizer']['claims']['sub']
     booking_time = datetime.strftime(datetime.utcnow(), '%Y-%m-%dT%H:%M:%SZ')
     # generate unique id if it isn't present in the request
     if 'booking_id' not in detail:
         detail['booking_id'] = str(uuid.uuid1())
     booking_id = detail['booking_id']
+    townId = detail['townId']
+    unitSize = detail['unitSize']
     ddb_item = {
         'bookingId': booking_id,
         'userId': user_id,
@@ -34,7 +36,8 @@ def book_unit(event: dict):
             'bookingId': booking_id,
             'userId': user_id,
             'unitId': unit_id,
-            'totalAmount': total_amount,
+            'townId': townId,
+            'unitSize': unitSize,
             'status': 'Booked',
             'bookingTime': booking_time,
         }
@@ -44,14 +47,14 @@ def book_unit(event: dict):
     table.put_item(Item=ddb_item, ConditionExpression='attribute_not_exists(bookingId) AND attribute_not_exists(userId)')
     
     # Update units table
-    unit_table = dynamodb.Table(unit_table_env)
-    unit_table.update_item(
-        Key={'unitId': unit_id},
-        UpdateExpression="set #status = :status",
-        ExpressionAttributeNames={'#status': 'status'},
-        ExpressionAttributeValues={':status': 'Booked'},
-        ConditionExpression='attribute_exists(unitId)'
-    )
+    # unit_table = dynamodb.Table(unit_table_env)
+    # unit_table.update_item(
+    #     Key={'unitId': unit_id},
+    #     UpdateExpression="set #status = :status",
+    #     ExpressionAttributeNames={'#status': 'status'},
+    #     ExpressionAttributeValues={':status': 'Booked'},
+    #     ConditionExpression='attribute_exists(unitId)'
+    # )
 
     detail['bookingTime'] = booking_time
     detail['status'] = 'Booked'
@@ -63,7 +66,12 @@ def lambda_handler(event, context):
         booking_detail = book_unit(event=event)
         response = {
             "statusCode": 200,
-            "headers": {},
+            "headers": {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            },
             "body": json.dumps(booking_detail)
         }
         return response
