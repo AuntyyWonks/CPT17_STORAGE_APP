@@ -1,4 +1,4 @@
-const bookingUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/booking";
+const bookingUrl = "https://fbbnd6c4pd.execute-api.eu-west-1.amazonaws.com/Prod/booking";
 
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();

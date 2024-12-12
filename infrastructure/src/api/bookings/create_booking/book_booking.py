@@ -4,9 +4,6 @@ from decimal import Decimal
 import json
 import uuid
 from datetime import datetime
-from aws_lambda_powertools import Logger
-
-logger = Logger()
 
 # Globals
 booking_table_env = os.getenv('BOOKING_TABLE_NAME')
@@ -15,8 +12,6 @@ unit_table_env = os.getenv('UNITS_TABLE_NAME')
 dynamodb = boto3.resource('dynamodb')
 
 def book_unit(event: dict):
-    logger.info("Booking a new unit")
-    logger.info("event: "+ event)
 
     detail = json.loads(event['body'])
     unit_id = str(uuid.uuid1())

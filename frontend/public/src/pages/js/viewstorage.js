@@ -1,4 +1,4 @@
-const bookedUnitsUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/bookings";
+const bookedUnitsUrl = "https://fbbnd6c4pd.execute-api.eu-west-1.amazonaws.com/Prod/bookings";
 
 function checkStorage() {
     const userDetails = {
