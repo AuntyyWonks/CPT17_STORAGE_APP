@@ -12,7 +12,7 @@ unit_table_env = os.getenv('UNITS_TABLE_NAME')
 dynamodb = boto3.resource('dynamodb')
 
 def book_unit(event: dict):
-
+    print(event)
     detail = json.loads(event['body'])
     unit_id = str(uuid.uuid1())
     # total_amount = detail['totalAmount']
