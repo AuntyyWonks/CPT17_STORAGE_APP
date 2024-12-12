@@ -9,7 +9,8 @@ function checkStorage() {
     try {
         fetch(bookedUnitsUrl, {
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem("id_token")
             },
             method: 'POST',
             body: JSON.stringify(userDetails),
