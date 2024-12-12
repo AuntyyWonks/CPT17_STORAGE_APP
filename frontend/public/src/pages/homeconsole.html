@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header style="position: absolute; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
+    <header style="position: fixed; top: 0; width: 100%; padding: 15px; z-index: 2; display: flex; justify-content: space-between; align-items: center; background-color: rgba(0, 0, 0, 0.8);">
         <div style="color: #B0C4DE; font-size: 2em; font-weight: bold;">BYTEBOX</div>
     
         <div class="menu" style="display: flex; gap: 250px; align-items: center;">
@@ -55,6 +55,32 @@
             }
         });
     </script>
+
+<main style="padding-top: 60px; text-align: center;">
+    <h2>Available Storage Options</h2>
+    <div class="box-container">
+        <!-- Storage Option 1 -->
+        <div class="storage-box">
+            <h2>Small Storage</h2>
+            <p>5x5 ft - Perfect for small items</p>
+            <button class="button">Rent Now</button>
+        </div>
+
+        <!-- Storage Option 2 -->
+        <div class="storage-box">
+            <h2>Medium Storage</h2>
+            <p>10x10 ft - Ideal for medium-sized items</p>        
+            <button class="button">Rent Now</button>
+        </div>
+
+        <!-- Option 3 -->
+        <div class="storage-box">
+            <h2>Large Storage</h2>
+            <p>15x15 ft - Great for larger items</p>        
+            <button class="button" onclick='window.location.href = "booking.html"'>Rent Now</button>
+        </div>
+    </div>
+</main>
 
     <footer style="position: absolute; bottom: 0; width: 100%; padding: 10px; text-align: center; background-color: rgba(0, 0, 0, 0.8); color: #B0C4DE;">
         © 2024 BYTEBOX. All rights reserved.
