@@ -167,7 +167,12 @@ Resources:
       TracingEnabled: true
       Tags:
         Name: !Sub "${AWS::StackName}-API"
-        Stack: !Sub "${AWS::StackName}"      
+        Stack: !Sub "${AWS::StackName}"   
+      Cors:
+        AllowOrigin: "'*'"
+        AllowMethods: "'OPTIONS,GET,POST'"
+        AllowHeaders: "'Content-Type,Authorization'"
+        MaxAge: 600   
       Auth:
         DefaultAuthorizer: LambdaTokenAuthorizer
         Authorizers:
