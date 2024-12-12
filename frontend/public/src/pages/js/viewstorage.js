@@ -1,6 +1,5 @@
 const bookedUnitsUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/bookings";
 
-
 function checkStorage() {
     const userDetails = {
         username: localStorage.getItem("username")
@@ -8,11 +7,11 @@ function checkStorage() {
 
     console.log(userDetails);
     try {
-        fetch(bookingUrl, {
+        fetch(bookedUnitsUrl, {
             headers: {
                 'Content-Type': 'application/json'
             },
-            method: 'GET',
+            method: 'POST',
             body: JSON.stringify(userDetails),
         })
         .then(response => {

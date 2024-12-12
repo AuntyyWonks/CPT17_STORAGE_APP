@@ -1,4 +1,4 @@
-const bookingUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/bookings";
+const bookingUrl = "https://94yepvk88e.execute-api.eu-west-1.amazonaws.com/Prod/booking";
 
 document.getElementById('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ document.getElementById('bookingForm').addEventListener('submit', async (e) => {
                 if (response.ok) {
                     console.log("response: ");
                     console.log(response);
-                     window.location.href = "viewstorage.html";
+                    window.location.href = "viewstorage.html";
                 } else {
                     // Handle the error
                     errorMessage.textContent = data.error;

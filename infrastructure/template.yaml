@@ -301,7 +301,7 @@ Resources:
         ApiEvent:
           Type: Api
           Properties:
-            Path: /bookings
+            Path: /booking
             Method: post
             RestApiId: !Ref CapstoneRestAPI
   GetBookingsFunction:
@@ -323,7 +323,7 @@ Resources:
           Type: Api
           Properties:
             Path: /bookings
-            Method: get
+            Method: post
             RestApiId: !Ref CapstoneRestAPI
 
   UserPool:
